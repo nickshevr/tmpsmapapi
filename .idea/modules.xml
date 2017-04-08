@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/tmpsmaptesting.iml" filepath="$PROJECT_DIR$/tmpsmaptesting.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tmpsmapapi.iml" filepath="$PROJECT_DIR$/tmpsmapapi.iml" />
     </modules>
   </component>
 </project>

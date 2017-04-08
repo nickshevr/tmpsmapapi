@@ -1,5 +1,8 @@
 package com.example.nick.tmpsmaptesting;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
@@ -12,10 +15,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
-public class MapsActivity extends FragmentActivity implements OnMapLongClickListener, OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapLongClickListener, OnMapReadyCallback, DialogInterface.OnClickListener {
 
     public ArrayList<MarkerCoords> marksList;
     public int MarkerCount;
+    private LatLng mClickPos;
 
     private GoogleMap mMap;
 
@@ -30,6 +34,10 @@ public class MapsActivity extends FragmentActivity implements OnMapLongClickList
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
+
+// Create the AlertDialog
     }
 
 
@@ -49,11 +57,21 @@ public class MapsActivity extends FragmentActivity implements OnMapLongClickList
     }
 
     public void onMapLongClick(LatLng point) {
-        marksList.add(new MarkerCoords("Marker"+Integer.toString(this.MarkerCount), point));
+        mClickPos = point;
+        new AlertDialog.Builder(MapsActivity.this)
+                .setPositiveButton("Create", MapsActivity.this)
+                .setNegativeButton("Cancel", null)
+                .show();
+
 
         mMap.addMarker(new MarkerOptions()
                 .position(point)
-                .title("Marker"+Integer.toString(this.MarkerCount))
         );
+    }
+
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        marksList.add(new MarkerCoords("Marker"+Integer.toString(this.MarkerCount), mClickPos));
+        mMap.addMarker(new MarkerOptions().position(mClickPos).title("Marker"+Integer.toString(this.MarkerCount)));
     }
 }
