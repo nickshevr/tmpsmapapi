@@ -3,8 +3,14 @@ package com.example.nick.tmpsmaptesting;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
+import android.widget.EditText;
+import android.widget.Toast;
+import android.widget.ListView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
@@ -15,9 +21,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
-public class MapsActivity extends FragmentActivity implements OnMapLongClickListener, OnMapReadyCallback, DialogInterface.OnClickListener {
+public class MapsActivity extends FragmentActivity implements OnMapLongClickListener, OnMapReadyCallback {
 
-    public ArrayList<MarkerCoords> marksList;
+    public ArrayList<MarkerCoords> marksList = new ArrayList<MarkerCoords>();
     public int MarkerCount;
     private LatLng mClickPos;
 
@@ -34,7 +40,6 @@ public class MapsActivity extends FragmentActivity implements OnMapLongClickList
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
 
 
 // Create the AlertDialog
@@ -54,24 +59,51 @@ public class MapsActivity extends FragmentActivity implements OnMapLongClickList
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setOnMapLongClickListener(this);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
     }
 
     public void onMapLongClick(LatLng point) {
         mClickPos = point;
-        new AlertDialog.Builder(MapsActivity.this)
-                .setPositiveButton("Create", MapsActivity.this)
-                .setNegativeButton("Cancel", null)
-                .show();
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Title");
 
-        mMap.addMarker(new MarkerOptions()
-                .position(point)
-        );
-    }
+        // Set up the input
+        final EditText input = new EditText(this);
+        builder.setView(input);
 
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-        marksList.add(new MarkerCoords("Marker"+Integer.toString(this.MarkerCount), mClickPos));
-        mMap.addMarker(new MarkerOptions().position(mClickPos).title("Marker"+Integer.toString(this.MarkerCount)));
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String text = input.getText().toString();
+
+                if (text.length() != 0) {
+                    mMap.addMarker(new MarkerOptions()
+                            .position(mClickPos)
+                            .title(text));
+                    marksList.add(new MarkerCoords(text, mClickPos));
+                } else {
+                    Toast.makeText(MapsActivity.this, "Неккоректные данные", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
     }
 }
