@@ -3,14 +3,18 @@ package com.example.nick.tmpsmaptesting;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.widget.ListView;
+import com.example.nick.tmpsmaptesting.MarkerCoords;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
@@ -26,6 +30,7 @@ public class MapsActivity extends FragmentActivity implements OnMapLongClickList
     public ArrayList<MarkerCoords> marksList = new ArrayList<MarkerCoords>();
     public int MarkerCount;
     private LatLng mClickPos;
+    public ArrayList<String> markerNames = new ArrayList<>();
 
     private GoogleMap mMap;
 
@@ -33,6 +38,7 @@ public class MapsActivity extends FragmentActivity implements OnMapLongClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        Button cordsListButton = (Button) findViewById(R.id.coordsButton);
 
         this.MarkerCount = 0;
 
@@ -40,6 +46,17 @@ public class MapsActivity extends FragmentActivity implements OnMapLongClickList
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        cordsListButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                //переходим с первой на вторую активность
+                Intent intent = new Intent(MapsActivity.this, listCoords.class);
+                intent.putStringArrayListExtra("names", (ArrayList<String>) markerNames);
+                startActivity(intent);
+            }
+        });
 
 
 // Create the AlertDialog
@@ -93,6 +110,7 @@ public class MapsActivity extends FragmentActivity implements OnMapLongClickList
                             .position(mClickPos)
                             .title(text));
                     marksList.add(new MarkerCoords(text, mClickPos));
+                    markerNames.add(text);
                 } else {
                     Toast.makeText(MapsActivity.this, "Неккоректные данные", Toast.LENGTH_SHORT).show();
                 }

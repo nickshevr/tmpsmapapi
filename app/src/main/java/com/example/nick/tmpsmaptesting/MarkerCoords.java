@@ -1,7 +1,9 @@
 package com.example.nick.tmpsmaptesting;
 import com.google.android.gms.maps.model.LatLng;
 
-public class MarkerCoords {
+import java.io.Serializable;
+
+public class MarkerCoords implements Serializable {
     public String name;
     public LatLng point;
 
