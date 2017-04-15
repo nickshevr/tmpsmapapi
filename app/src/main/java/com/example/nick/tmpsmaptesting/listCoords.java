@@ -14,10 +14,6 @@ import java.util.Arrays;
 
 
 public class listCoords extends ListActivity implements AdapterView.OnItemLongClickListener {
-    final String[] cordsName = new String[]{"Рыжик", "Барсик", "Мурзик",
-            "Мурка", "Васька", "Томасина", "Бобик", "Кристина", "Пушок",
-            "Дымка", "Кузя", "Китти", "Барбос", "Масяня", "Симба"};
-
     private ArrayAdapter<String> mAdapter;
     private ArrayList<String> catNamesList = new ArrayList<>();
 
